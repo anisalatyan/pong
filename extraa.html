@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<canvas id="canvas" width="700" height="500"> </canvas>
+<script>
+	
+	const canvas=document.getElementById("canvas");
+	const ctx=canvas.getContext("2d");
+
+	const baseImage= new Image ();
+	baseImage.src ='http://www.developper-jeux-video.com/wp-content/uploads/2013/02/pongTerrain.png';
+const gameData ={
+	rect:{
+		x:680,
+		y:220,
+		width:10,
+		height:50,
+		//xDelta:3,
+		yDelta:4
+	},
+	rectik:{
+		x:10,
+		y:220,
+		width:10,
+		height:50,
+		//xDelta:3,
+		yDelta:4
+	},
+	circle:{
+		x:350,
+		y:250,
+		r:5,
+		// width:10,
+		// height:10,
+		xDelta:2,
+		yDelta:2
+	}
+};
+
+const score = {
+  rect:0,
+  rectik:0,
+};
+	const draw= function() {
+		ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+		ctx.lineWidth = 10;
+	ctx.strokeStyle = '#FF0000';
+    ctx.beginPath();
+    ctx.arc(gameData.circle.x,gameData.circle.y,gameData.circle.r, 0, 2*Math.PI, false);
+	ctx.stroke();
+	ctx.fillStyle="blue";
+	ctx.fillRect (gameData.rect.x, gameData.rect.y,gameData.rect.width, gameData.rect.height);
+	ctx.fillStyle="blue";
+	ctx.fillRect (gameData.rectik.x, gameData.rectik.y,gameData.rectik.width, gameData.rectik.height);
+	ctx.fillText(score.rect,250,50);
+	ctx.fillStyle="#9400D3";
+	ctx.fillText(score.rectik,450,50);
+	ctx.fillStyle="#FF1493";
+	};
+
+const update=function(){
+ gameData.circle.x+=gameData.circle.xDelta;
+ gameData.circle.y+=gameData.circle.yDelta;
+if(gameData.circle.y+gameData.circle.r>=500 || gameData.circle.y+gameData.circle.r<=0){
+  gameData.circle.yDelta=-gameData.circle.yDelta;
+}
+
+if(gameData.circle.x+gameData.circle.r>=gameData.rect.x && gameData.circle.x+gameData.circle.r<canvas.width && gameData.rect.y+gameData.rect.height>=gameData.circle.y-gameData.circle.r  && gameData.rect.y<= gameData.circle.y+gameData.circle.r ){
+  gameData.circle.xDelta=-gameData.circle.xDelta;
+}
+
+else if(gameData.circle.x+gameData.circle.r<0){
+score.rect++;
+  gameData.circle.x = gameData.rect.x-gameData.circle.r;
+  gameData.circle.y = gameData.rect.y+(gameData.rect.height/4);
+}
+
+if(gameData.circle.x-gameData.circle.r<=gameData.rectik.x+gameData.rectik.width && gameData.circle.x+gameData.circle.r>0 && gameData.rectik.y<=gameData.circle.y+gameData.circle.r && gameData.rectik.y+gameData.rectik.height>= gameData.circle.y-gameData.circle.r){
+   gameData.circle.xDelta=-gameData.circle.xDelta;
+}
+else if(gameData.circle.x+gameData.circle.r>canvas.width){
+   score.rectik++;
+  gameData.circle.x = gameData.rectik.x+gameData.circle.r
+  gameData.circle.y = gameData.rectik.y+(gameData.rectik.height/2);
+}
+}
+
+//upKey=38
+//w=87
+//downkey=40
+//s=83
+//x+=y ---> x = x+y
+
+document.addEventListener("keydown", function(event) {
+  if(event.keyCode === 40 && gameData.rect.y + gameData.rect.height < canvas.height) {
+    gameData.rect.y += gameData.rect.yDelta;//gameData.rect.y= gameData.rect.y + gameData.rect.yDelta
+  } else if(event.keyCode === 38 && gameData.rect.y >= 0) {
+    gameData.rect.y -= gameData.rect.yDelta;
+  } //gameData.rect.y = gameData.rect.y - gameData.rect.yDelta
+  if(event.keyCode === 83 && gameData.rectik.y + gameData.rectik.height < canvas.height) {
+    gameData.rectik.y += gameData.rectik.yDelta;
+  } else if(event.keyCode === 87 && gameData.rectik.y >= 0) {
+    gameData.rectik.y -= gameData.rectik.yDelta;
+  }
+})
+
+
+const loop=function(){
+  draw();
+  update();
+  requestAnimationFrame(loop);
+}
+
+loop();
+
+	
+</script>
+</body>
+</html>
